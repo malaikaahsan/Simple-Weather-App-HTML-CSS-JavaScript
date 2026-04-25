@@ -106,21 +106,32 @@ searchbtn.addEventListener('click', async () => {
 })
 
 let getFutureData = async (value) => {
-    let days = 8;
-    let url = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=bf220ca73980496a9c475734250608&q=${value}&days=${days}&hour=12`)
-    let data = await url.json()
-    let container = document.getElementById("future");
-    container.innerHTML = " ";
-    for (let i = 1; i < days; i++) {
-        let getday = new Date(data.forecast.forecastday[i].date)
-        container.innerHTML = container.innerHTML + `<div class="card back">
-        <div class="futureimg"><img src="${data.forecast.forecastday[i].day.condition.icon}" alt ="img"></div>
-        <div class="futureday">`+ getDayName(getday) + `</div>
-        <div class="futuretext">${data.forecast.forecastday[i].day.condition.text}</div>
-        <div class="futuretemp">${data.forecast.forecastday[i].hour[0].temp_c} °C</div>
-        </div>`
+    try {
+       
+        let days = 8;
+        let url = `https://api.weatherapi.com/v1/forecast.json?key=bf220ca73980496a9c475734250608&q=${value}&days=${days}&hour=12`;
+        
+      
+        let response = await fetch(url);
+        let data = await response.json();
+        
+        let container = document.getElementById("future");
+        container.innerHTML = ""; 
+        
+      
+        for (let i = 1; i < data.forecast.forecastday.length; i++) {
+            let getday = new Date(data.forecast.forecastday[i].date);
+            
+            container.innerHTML += `<div class="card back">
+                <div class="futureimg"><img src="${data.forecast.forecastday[i].day.condition.icon}" alt="img"></div>
+                <div class="futureday">${getDayName(getday)}</div>
+                <div class="futuretext">${data.forecast.forecastday[i].day.condition.text}</div>
+                <div class="futuretemp">${data.forecast.forecastday[i].hour[0].temp_c} °C</div>
+            </div>`;
+        }
+    } catch (error) {
+        console.error("Error fetching future data: ", error);
     }
 }
-
 
 
